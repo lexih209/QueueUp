@@ -73,6 +73,7 @@ int main() {
         //Layer 5: Username suggestions feature
         //Layer 6: Password protection/authentication
 
+
     cout << "\nHello " << userName << "! Let's get you started!" << endl;
 
 
@@ -81,7 +82,7 @@ int main() {
 
     //TO DO: matchmaking() function that matches user to other users based on quiz answers
         //Layer 2: Match based on number of matching answers
-        //Layer 3: Match based on specific answers (i.e. if user wants to play FPS, match with other FPS players)
+        //Layer 3: Add more questions and randomize top results
         //Layer 4: Add more users to match against (read from file?)
         //Layer 5: Output matches to a file
 
