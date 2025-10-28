@@ -3,7 +3,9 @@
 #include <vector>
 #include <map>
 #include <limits>  
-
+#include <algorithm>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -19,6 +21,32 @@ string setUserName(map<string, vector<bool>>& userList) {
     return userName;
 }
 
+void loadUsers(map<string, vector<bool>>& userList, const string& filename){
+    ifstream file(filename);
+    string line;
+
+    if (!file.is_open()) {
+        cout << "Error: Could not open file: " << filename << endl;
+        return;
+    }
+
+    while (getline(file, line)) {
+
+        stringstream ss(line);
+        string userName;
+        string playstyle;
+
+        getline(ss, userName, ',');
+        getline(ss, playstyle, ',');
+
+        bool isCompetitive = (playstyle == "True" || playstyle == "1" || playstyle == "true");
+
+        //store in map
+        userList[name].push_back(isCompetitive);
+
+        }
+    
+}
 
 // TO DO: userQuiz() function that asks user gaming preference questions
 //  Layer 2: Store answers in a struct or class
@@ -52,9 +80,11 @@ void quiz(const string& userName, map<string, vector<bool>>& userList) {
         if (input == 1) {
             userList[userName].push_back(true);
             break; // can break from loop once valid
+
         } else if (input == 2) {
             userList[userName].push_back(false);
             break; // break from loop once valid
+
         } else {
             cout << "Invalid choice. Enter 1 or 2: ";
         }
@@ -65,6 +95,14 @@ void quiz(const string& userName, map<string, vector<bool>>& userList) {
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }
 
+int compatibilityScore(const vector<bool>& a, const vector<bool>& b) {
+        int score = 0;
+        int len = min(a.size(), b.size());
+        for (int i = 0; i < len; ++i) {
+            if (a[i] == b[i]) score++;
+        }
+        return score;
+}
 
 // TO DO: matchmaking() function that matches user to other users based on quiz answers
 //  Layer 2: Match based on number of matching answers
@@ -80,6 +118,7 @@ void matchMaker(const string& userName, const map<string, vector<bool>>& userLis
 
 
     const vector<bool>& myAnswers = it->second;
+    vector<pair<string, int>> matches; // pair of username and score
 
 
     cout << "Matches for user " << userName << " : ";
@@ -90,16 +129,31 @@ void matchMaker(const string& userName, const map<string, vector<bool>>& userLis
         const string& otherName = kv.first;
         const vector<bool>& answers = kv.second;
 
+        // don't match with self
+        if (otherName == userName){
 
-        if (otherName == userName) continue; // don't match with self
-
-
-        if (answers == myAnswers) {
-            cout << otherName << " ";
-            any = true;
+         continue; 
         }
+
+        int score = compatibilityScore(myAnswers, answers);
+        matches.push_back({otherName, score});
     }
 
+    // Sort top matches by score
+    sort(matches.begin(), matches.end(), [](const auto& a, const auto& b) {
+        return a.second > b.second;
+    });
+
+    //Output top 3 matches
+    cout << "\nTop Matches:\n";
+    int shown = 0;
+
+    for (const auto& match : matches) {
+        if (shown >= 3) break;
+        cout << match.first << " (Score: " << match.second << ")\n";
+        any = true;
+        shown++;
+    }
 
     if (!any) cout << "(no exact matches)";
     cout << "\nThose are all the matches!\n";
@@ -109,7 +163,10 @@ void matchMaker(const string& userName, const map<string, vector<bool>>& userLis
 int main() {
     string userName; // for userNames
     map<string, vector<bool>> userList; // each user has true/false responses for series of questions
+    
 
+    //Load existing users from file
+    loadUsers(userList, "users.csv");
 
     // 1) Get username and add entry
     userName = setUserName(userList);
