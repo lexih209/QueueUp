@@ -42,7 +42,7 @@ void loadUsers(map<string, vector<bool>>& userList, const string& filename){
         bool isCompetitive = (playstyle == "True" || playstyle == "1" || playstyle == "true");
 
         //store in map
-        userList[name].push_back(isCompetitive);
+        userList[userName].push_back(isCompetitive);
 
         }
     
