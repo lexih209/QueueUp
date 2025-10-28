@@ -4,6 +4,7 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -11,28 +12,45 @@ using namespace std;
 class User {
 
 public:
-    string username;
+    string username, gender, favoriteGenre, schedule;
+    bool isCompetitive;
+
     vector<bool> quizAnswers;
 
-    User(string name = "") {
-        username = name;
+    User(string name = "", string gen = "", string favGenre = "", string sched = "", bool competitive = false)
+        : username(name), gender(gen), favoriteGenre(favGenre), schedule(sched), isCompetitive(competitive) {}
+
+
+    //Comparison logic
+
+    bool isCompatibleWith(const User& other) const {
+        if (gender != other.gender){
+            return false; // different gender
+        }
+        if (favoriteGenre != other.favoriteGenre){
+            return false; // different game
+        }
+        if (schedule != other.schedule){
+            return false; // different schedule
+        }
+        if (isCompetitive != other.isCompetitive) return false;
+        return true; // compatible
+
     }
 
-    //Add answer function to append vector
-    void addAnswers(bool answer){
-        quizAnswers.push_back(answer);
+    int similarityScore(const User& other ) const {
+        int score = 0;
+
+        if (gender == other.gender) score++;
+        if (favoriteGenre == other.favoriteGenre) score++;
+        if (schedule == other.schedule) score++;
+        if (isCompetitive == other.isCompetitive) score++;
+        return score;
+
     }
-
-
-    bool operator==(const User& other) const{
-        return (quizAnswers == other.quizAnswers);
-    }
-
-    int getTotalResponses() const {
-        return quizAnswers.size();
-    }
-
-}
+        
+    
+};
 
 
 
