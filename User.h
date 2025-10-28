@@ -16,7 +16,12 @@ public:
     bool isCompetitive;
 
     vector<bool> quizAnswers;
-
+    /* questions for future:
+     If were were to make a scale for the user to answer for each question,
+     how would we implement that? 
+     Would maybe have to change from boolean to int for the answers if, that's
+     the direction we want to go?
+    */
     User(string name = "", string gen = "", string favGenre = "", string sched = "", bool competitive = false)
         : username(name), gender(gen), favoriteGenre(favGenre), schedule(sched), isCompetitive(competitive) {}
 
@@ -47,6 +52,7 @@ public:
         if (isCompetitive == other.isCompetitive) score++;
         return score;
 
+        // note: still same as match, will need to implement questions after
     }
         
     

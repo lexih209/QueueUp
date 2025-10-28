@@ -137,8 +137,15 @@ void matchMaker(const User& currentUser, const vector<User>& users) {
 
 int main() {
 
-   vector<User> users; // each user has true/false responses for series of questions
+    vector<User> users; // each user has true/false responses for series of questions
     
+    /* Would creating a custom database class or something like that be beneficial?
+    storing users in a vector is simpilier, but costly for time with a lot of users. 
+    Maybe assigning each user an ID number(that will never change), 
+    then using a that ID as a key might be more efficient. 
+    Then if a user say wants to even change their username or schedules, 
+    we can just search up their username instead of searching the entire database.
+    */
 
     //Load existing users from file
     loadUsers(users, "users.csv");
