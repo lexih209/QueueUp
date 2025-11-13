@@ -82,7 +82,8 @@ User quiz(){
     cout << "What is your favorite game genre? (Cozy / Survival / Action / Horror / Simulation / Strategy): ";
     getline(cin, favoriteGenre);
 
-    cout << "When are you usually available to game? (Mornings / Afternoons / Evenings / Weekends): ";
+    cout << "When are you us
+    ually available to game? (Mornings / Afternoons / Evenings / Weekends): ";
     getline(cin, schedule);
 
     // Final Question in original format
@@ -135,7 +136,9 @@ void matchMaker(const User& currentUser, const vector<User>& users) {
     }
 }
 
-int main() {
+int 
+
+main() {
 
     vector<User> users; // each user has true/false responses for series of questions
     
