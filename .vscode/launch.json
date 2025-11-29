@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/CSUEB/CSUEB_Projects/CS 201/QueueUp",
-      "program": "c:/CSUEB/CSUEB_Projects/CS 201/QueueUp/build/Debug/outDebug",
+      "cwd": "c:/CSUEB/CSUEB_Projects/CS 201/QueueUp-1",
+      "program": "c:/CSUEB/CSUEB_Projects/CS 201/QueueUp-1/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
