@@ -10,15 +10,12 @@
 
 using namespace std;
 
-
 // array for questions
 vector<string> qList[5]; // vector index corresponds to points
 // ex: ?array[1]["Do you like mansplaining?"] That question is one point
 
-
-
-//Function that sets the user name and adds them to the user list
-//Currently unused
+// Function that sets the user name and adds them to the user list
+// Currently unused
 string setUserName(map<string, vector<bool>>& userList) {
     string userName;
 
@@ -27,7 +24,6 @@ string setUserName(map<string, vector<bool>>& userList) {
     userList[userName]; // creates key but, doesn't have values yet
     return userName;
 }
-
 
 // Function to load users from a CSV file
 void loadUsers(vector<User>& users, const string& filename) {
@@ -54,29 +50,16 @@ void loadUsers(vector<User>& users, const string& filename) {
 
         //store in user var
         users.push_back(User(userName, gender, genre, schedule, isCompetitive));
-
-        }
-    
+    }
 }
-
-
 
 // TO DO: userQuiz() 
 //  Layer 4: Add more answer choices
 //  Layer 5: Input validation
-
-
 User quiz(){
     int input; // to be used for input for question responses
     string name, gender, favoriteGenre, schedule;
 
-    // Debug: ensure user exists in the map
-    //if (userList.find(userName) == userList.end()) {
-    //    // If somehow missing, create entry
-    //    userList[userName];
-   // }
-
-    //Get quiz answers, Layer 2 expansion to more questions
     cout << "Enter your name: ";
     getline(cin, name);
 
@@ -91,10 +74,6 @@ User quiz(){
     cout << "When are you usually available to game? (Mornings / Afternoons / Evenings / Weekends): ";
     getline(cin, schedule);
 
-    // Final Question in original format
-    // IMPORTANT: When adding more questions keep track of index of each
-    // this question is index 0 for example
-
     cout << "Are you looking for a more competitive or casual experience? (Enter 1 or 2)\n";
 
     while (!(cin >> input) || (input != 1 && input != 2)) {
@@ -108,7 +87,6 @@ User quiz(){
 
     return User(name, gender, favoriteGenre, schedule, isCompetitive, true); 
 }
-
 
 // TO DO: matchmaking() function that matches user to other users based on quiz answers
 //  Layer 2: Match based on number of matching answers
@@ -131,13 +109,43 @@ void matchMaker(const User& currentUser, const vector<User>& users) {
         return;
     }
 
+    // Sort matches by score (highest first)
     sort(matches.begin(), matches.end(),
          [](auto& a, auto& b) { return a.second > b.second; });
 
     cout << "\nTop Matches:\n";
     size_t limit = matches.size() < 3 ? matches.size() : 3;
-    for (size_t i = 0; i < limit; ++i) {
-        cout << matches[i].first << " (Score: " << matches[i].second << ")\n";
+
+    int matchIndex = 0; // Keeps track of the current match being displayed
+    while (matchIndex < limit) {
+        // Display current match
+        cout << "\nMatch " << matchIndex + 1 << " of " << limit << ": " 
+             << matches[matchIndex].first << " (Score: " << matches[matchIndex].second << ")\n";
+
+        cout << "\n[1] Message\n";
+        cout << "[2] Add to Favorites\n";
+        cout << "[3] Skip\n";
+        cout << "[4] Next Match\n";
+
+        int choice;
+        while (true) {
+            cout << "Choose an option: ";
+            cin >> choice;
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear buffer
+
+            if (choice == 4) {
+                matchIndex++; // Move to the next match
+                break;
+            } else if (choice == 1) {
+                cout << "You can now message " << matches[matchIndex].first << "!\n";
+            } else if (choice == 2) {
+                cout << matches[matchIndex].first << " has been added to favorites.\n";
+            } else if (choice == 3) {
+                cout << "You skipped " << matches[matchIndex].first << ".\n";
+            } else {
+                cout << "Invalid option, please choose again.\n";
+            }
+        }
     }
 }
 
@@ -148,8 +156,7 @@ void addQuestion(vector<User>& list, int points, string question){
     }
 }
 
-// separated it from the addQuestions because I don't want it to answer after
-// each question. 
+// separated it from the addQuestions because I don't want it to answer after each question. 
 void scoreCalc(vector<User>& list ){
     for(User& current : list){
         if(current.isDummy){
@@ -165,7 +172,6 @@ void scoreCalc(vector<User>& list ){
 }
 
 // make a function to answer all questions for user and dummies
-
 void fillQs(vector<User>& list){
     for(User& current : list){
         if(current.isDummy == true){
@@ -180,10 +186,8 @@ void fillQs(vector<User>& list){
     }
 }
 
-
 int main() {
     vector<User> users; // each user has true/false responses for series of questions
-
     
     //Load existing users from file
     //loadUsers(users, "users.csv");
@@ -191,14 +195,14 @@ int main() {
     cout << "Welcome to QueueUp!" << endl;
     cout << "A matchmaking service for gamers!" << endl;
 
-    //Calls Quiz function to get user info and store quiz answers
+    // Calls Quiz function to get user info and store quiz answers
     User currentUser = quiz();
     users.push_back(currentUser);
 
-    // load the dummy users
+    // Load the dummy users
     loadUsers(users, "users.csv");
     
-    // add questions before running matchmaker 
+    // Add questions before running matchmaker 
     // HAS TO BE AFTER ALL USERS ARE LOADED IN
     addQuestion(users, 5, "Are you a variety gamer?");
     addQuestion(users, 4, "Do you play on console?");
@@ -210,12 +214,11 @@ int main() {
     addQuestion(users, 4, "Are you brainrot?");
     addQuestion(users, 1, "Do you play outside of your listed hours?");
 
-
-    // answer questions for whole list
+    // Answer questions for whole list
     // HAS TO BE AFTER QUESTIONS ARE ADDED
     fillQs(users);
     
-    //Run matchmaker function
+    // Run matchmaker function
     matchMaker(users[0], users);
 
     // Exit message
