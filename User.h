@@ -113,7 +113,7 @@ public:
         gender = gen;
         favoriteGenre = favGenre; 
         schedule = sched;
-        isCompetitive = false;
+        isCompetitive = competitive;
         isDummy = true;
     }
 
@@ -140,9 +140,10 @@ public:
     // changed from "int" to "size_t" because apparently it's used for vectors
     int similarityScore(const User& other ) const {
         int score = 0;
-        // check if the non-negotioables match 
-        if(!isCompatibleWith(other)){
-            return 0; // return 0 since they're noncompatible
+        // instead of excluding non-compatible users, give a large bonus
+        // if the non-negotiables match so they rank much higher
+        if (isCompatibleWith(other)){
+            score += 50; // compatibility bonus
         }
         // now go through each question and add up score
         for (size_t p = 0; p < 5; ++p){ //outter loop(point value of each question)

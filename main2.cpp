@@ -10,6 +10,17 @@
 
 using namespace std;
 
+static inline string toLowerTrim(string s){
+    // trim
+    auto l = s.find_first_not_of(" \t\r\n");
+    if(l==string::npos) return string();
+    auto r = s.find_last_not_of(" \t\r\n");
+    s = s.substr(l, r-l+1);
+    // to lower
+    transform(s.begin(), s.end(), s.begin(), [](unsigned char c){ return tolower(c); });
+    return s;
+}
+
 
 // array for questions
 vector<string> qList[5]; // vector index corresponds to points
@@ -39,7 +50,16 @@ void loadUsers(vector<User>& users, const string& filename) {
         return;
     }
 
+    bool firstLine = true;
     while (getline(file, line)) {
+        if(firstLine){
+            firstLine = false;
+            // skip header if it contains 'username' (case-insensitive)
+            string lower = line;
+            transform(lower.begin(), lower.end(), lower.begin(), [](unsigned char c){ return tolower(c); });
+            if(lower.find("username") != string::npos) continue;
+            // otherwise fall through and parse as data
+        }
 
         stringstream ss(line);
         string userName, gender, genre, schedule, playstyle;
@@ -50,12 +70,17 @@ void loadUsers(vector<User>& users, const string& filename) {
         getline(ss, schedule, ',');
         getline(ss, playstyle, ',');
 
-        bool isCompetitive = (playstyle == "True" || playstyle == "1" || playstyle == "true");
+        // normalize fields to lowercase/trim so comparisons are consistent
+        gender = toLowerTrim(gender);
+        genre = toLowerTrim(genre);
+        schedule = toLowerTrim(schedule);
+        playstyle = toLowerTrim(playstyle);
+
+        bool isCompetitive = (playstyle == "true" || playstyle == "1");
 
         //store in user var
         users.push_back(User(userName, gender, genre, schedule, isCompetitive));
-
-        }
+    }
     
 }
 
@@ -84,12 +109,15 @@ User quiz(){
 
     cout << "What gender would you prefer to game with? (Male, Female, Other): ";
     getline(cin, gender);
+    gender = toLowerTrim(gender);
 
     cout << "What is your favorite game genre? (Cozy / Survival / Action / Horror / Simulation / Strategy): ";
     getline(cin, favoriteGenre);
+    favoriteGenre = toLowerTrim(favoriteGenre);
 
     cout << "When are you usually available to game? (Mornings / Afternoons / Evenings / Weekends): ";
     getline(cin, schedule);
+    schedule = toLowerTrim(schedule);
 
     // Final Question in original format
     // IMPORTANT: When adding more questions keep track of index of each
@@ -118,12 +146,24 @@ User quiz(){
 void matchMaker(const User& currentUser, const vector<User>& users) {
     vector<pair<string, int>> matches;
 
+    cout << "\nCurrent User: " << currentUser.username 
+         << " | G:" << currentUser.gender << " Gr:" << currentUser.favoriteGenre 
+         << " S:" << currentUser.schedule << " C:" << (currentUser.isCompetitive ? "1" : "0") << "\n\n";
+
     for (const auto& other : users) {
         if (other.username == currentUser.username) continue;
-        if (!currentUser.isCompatibleWith(other)) continue;
 
+        //bool compatible = currentUser.isCompatibleWith(other);
         int score = currentUser.similarityScore(other);
         matches.push_back({other.username, score});
+        
+        /*Debug: show all candidates with score 50+
+        if (score >= 50) {
+            cout << "  " << other.username << " | Score: " << score 
+                 << " | Compatible: " << (compatible ? "YES" : "NO")
+                 << " | G:" << other.gender << " Gr:" << other.favoriteGenre 
+                 << " S:" << other.schedule << " C:" << (other.isCompetitive ? "1" : "0") << "\n";
+        }*/ 
     }
 
     if (matches.empty()) {
