@@ -35,6 +35,13 @@ void loadUsers(vector<User>& users, const string& filename) {
         return;
     }
 
+    auto trim = [](string s){
+        auto l = s.find_first_not_of(" \t\r\n");
+        if(l==string::npos) return string();
+        auto r = s.find_last_not_of(" \t\r\n");
+        return s.substr(l, r-l+1);
+    };
+
     bool firstLine = true;
     while (getline(file, line)) {
         if(firstLine){
@@ -55,13 +62,14 @@ void loadUsers(vector<User>& users, const string& filename) {
         getline(ss, schedule, ',');
         getline(ss, playstyle, ',');
 
-        // normalize fields to lowercase/trim so comparisons are consistent
-        gender = toLowerTrim(gender);
-        genre = toLowerTrim(genre);
-        schedule = toLowerTrim(schedule);
-        playstyle = toLowerTrim(playstyle);
+        // trim only (do not lowercase)
+        userName = trim(userName);
+        gender = trim(gender);
+        genre = trim(genre);
+        schedule = trim(schedule);
+        playstyle = trim(playstyle);
 
-        bool isCompetitive = (playstyle == "true" || playstyle == "1");
+        bool isCompetitive = (playstyle == "True" || playstyle == "true" || playstyle == "1");
 
         //store in user var
         users.push_back(User(userName, gender, genre, schedule, isCompetitive));
@@ -82,11 +90,11 @@ User quiz(){
 
     cout << "What gender would you prefer to game with? (Male, Female, Other): ";
     getline(cin, gender);
-    gender = toLowerTrim(gender);
+    //gender = (gender);
 
     cout << "What is your favorite game genre? (Cozy / Survival / Action / Horror / Simulation / Strategy): ";
     getline(cin, favoriteGenre);
-    favoriteGenre = toLowerTrim(favoriteGenre);
+    //favoriteGenre = toLowerTrim(favoriteGenre);
 
     cout << "When are you usually available to game? (Mornings / Afternoons / Evenings / Weekends): ";
     getline(cin, schedule);
