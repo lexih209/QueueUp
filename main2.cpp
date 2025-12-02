@@ -10,7 +10,6 @@
 
 using namespace std;
 
-
 // array for questions
 vector<string> qList[5]; // vector index corresponds to points
 // ex: ?array[1]["Do you like mansplaining?"] That question is one point
@@ -91,10 +90,6 @@ User quiz(){
 
     cout << "When are you usually available to game? (Mornings / Afternoons / Evenings / Weekends): ";
     getline(cin, schedule);
-
-    // Final Question in original format
-    // IMPORTANT: When adding more questions keep track of index of each
-    // this question is index 0 for example
 
     cout << "Are you looking for a more competitive or casual experience? (Enter 1 or 2)\n";
 
